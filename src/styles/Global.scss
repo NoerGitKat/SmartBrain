@@ -1,0 +1,22 @@
+@font-face {
+  font-family: "Lato";
+  font-style: normal;
+  font-weight: 400;
+  src: local("Lato Regular"), local("Lato-Regular"),
+    url("https://fonts.gstatic.com/s/lato/v14/S6uyw4BMUTPHjxAwXiWtFCfQ7A.woff2")
+      format("woff2");
+}
+
+body {
+  background: linear-gradient(#e66465, #9198e5) no-repeat;
+  height: 100vh;
+  font-family: "Lato";
+  overflow: hidden;
+}
+
+.particles {
+  position: absolute;
+  height: 100vh;
+  width: 100vw;
+  z-index: -10;
+}

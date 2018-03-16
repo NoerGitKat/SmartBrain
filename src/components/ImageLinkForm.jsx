@@ -1,7 +1,7 @@
 import React from "react";
 import "../styles/ImageLinkForm.scss";
 
-const ImageLinkForm = ({ getImageLink, faceURL }) => {
+const ImageLinkForm = ({ getImageLink, checkFace }) => {
   return (
     <div className="imageLinkFormContainer">
       <p>
@@ -9,8 +9,7 @@ const ImageLinkForm = ({ getImageLink, faceURL }) => {
         your face! Insert URL here:
       </p>
       <input type="text" onChange={getImageLink} />
-      <p>this value: {faceURL}</p>
-      <button>Feed!</button>
+      <button onClick={checkFace}>Feed!</button>
     </div>
   );
 };

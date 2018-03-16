@@ -8,6 +8,9 @@ const HTMLWebpackPluginConfig = new HTMLWebpackPlugin({
 
 module.exports = {
   entry: __dirname + "/src/index.js",
+  resolve: {
+    extensions: [".js", ".jsx"]
+  },
   module: {
     loaders: [
       {
@@ -23,8 +26,8 @@ module.exports = {
         use: ["style-loader", "css-loader", "sass-loader"]
       },
       {
-        test: /\.(eot|svg|ttf|woff|woff2)$/,
-        loader: "file-loader"
+        test: /\.(jpe?g|png|gif|svg)$/i,
+        loader: "file-loader?name=src/static/images/[name].[ext]"
       }
     ]
   },

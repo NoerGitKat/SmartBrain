@@ -1,0 +1,11 @@
+.logo {
+  display: inline-flex;
+  justify-content: flex-start;
+  img {
+    position: relative;
+    bottom: 3.5em;
+    margin-left: 1em;
+    height: 100px;
+    width: 100px;
+  }
+}

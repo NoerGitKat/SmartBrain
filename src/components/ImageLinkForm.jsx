@@ -1,7 +1,7 @@
 import React from "react";
 import "../styles/ImageLinkForm.scss";
 
-const ImageLinkForm = ({ getImageLink, checkFace }) => {
+const ImageLinkForm = ({ getImageLink, checkFace, box }) => {
   return (
     <div className="imageLinkFormContainer">
       <p>

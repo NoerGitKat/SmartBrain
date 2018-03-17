@@ -15,9 +15,15 @@ class App extends React.Component {
     this.state = {
       user: {},
       faceURL: "",
+      box: {},
       getImageLink: event => {
         this.setState({
           faceURL: event.target.value
+        });
+      },
+      calcFaceLocation: data => {
+        this.setState({
+          box: data.outputs[0].data.regions[0].region_info.bounding_box
         });
       },
       checkFace: () => {
@@ -25,10 +31,10 @@ class App extends React.Component {
           apiKey: "d3060b13869446c880c2106864843b4f"
         });
         app.models.predict(Clarifai.FACE_DETECT_MODEL, this.state.faceURL).then(
-          function(response) {
-            console.log("response", response);
+          response => {
+            this.state.calcFaceLocation(response);
           },
-          function(err) {
+          err => {
             // there was an error
             console.log("err", err);
           }
@@ -38,7 +44,7 @@ class App extends React.Component {
   }
 
   render() {
-    const { getImageLink, faceURL, user, checkFace } = this.state;
+    const { getImageLink, faceURL, user, checkFace, box } = this.state;
 
     const particlesOptions = {
       particles: {
@@ -58,12 +64,8 @@ class App extends React.Component {
         <Navigation />
         <Logo />
         <Rank username={user.username} />
-        <ImageLinkForm
-          getImageLink={getImageLink}
-          faceURL={faceURL}
-          checkFace={checkFace}
-        />
-        {faceURL ? <FaceRecognition imageURL={faceURL} /> : <div />}
+        <ImageLinkForm getImageLink={getImageLink} checkFace={checkFace} />
+        {faceURL ? <FaceRecognition imageURL={faceURL} box={box} /> : <div />}
       </div>
     );
   }

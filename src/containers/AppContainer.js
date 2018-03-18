@@ -6,6 +6,7 @@ import Rank from "../components/Rank";
 import FaceRecognition from "../components/FaceRecognition";
 import Particles from "react-particles-js";
 import Clarifai from "clarifai";
+import isImage from "../utils/isImage";
 import "../styles/Global.scss";
 
 class App extends React.Component {
@@ -15,15 +16,25 @@ class App extends React.Component {
     this.state = {
       user: {},
       faceURL: "",
+      validImg: false,
       box: {},
       getImageLink: event => {
-        this.setState({
-          faceURL: event.target.value
-        });
+        if (isImage(event.target.value)) {
+          this.setState({
+            faceURL: event.target.value,
+            validImg: true
+          });
+        } else {
+          this.setState({
+            faceURL: "",
+            validImg: false
+          });
+        }
       },
       calcFaceLocation: data => {
+        const faceLocation = data.outputs[0].data.regions[0].region_info.bounding_box;
         this.setState({
-          box: data.outputs[0].data.regions[0].region_info.bounding_box
+          box: faceLocation
         });
       },
       checkFace: () => {
@@ -44,7 +55,14 @@ class App extends React.Component {
   }
 
   render() {
-    const { getImageLink, faceURL, user, checkFace, box } = this.state;
+    const {
+      getImageLink,
+      faceURL,
+      user,
+      checkFace,
+      box,
+      validImg
+    } = this.state;
 
     const particlesOptions = {
       particles: {
@@ -65,7 +83,7 @@ class App extends React.Component {
         <Logo />
         <Rank username={user.username} />
         <ImageLinkForm getImageLink={getImageLink} checkFace={checkFace} />
-        {faceURL ? <FaceRecognition imageURL={faceURL} box={box} /> : <div />}
+        {validImg ? <FaceRecognition imageURL={faceURL} box={box} /> : <div />}
       </div>
     );
   }

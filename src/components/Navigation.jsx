@@ -1,15 +1,12 @@
 import React from "react";
 import "../styles/Navigation.scss";
 
-const Navigation = () => {
+const Navigation = ({ loggedIn, handleSignIn }) => {
+  console.log("loggedIn Nav", loggedIn);
   return (
     <nav>
       <ul>
-        <li>Home</li>
-        <li>About</li>
-        <li>Contact</li>
-        <li>Login</li>
-        <li>Signout</li>
+        {!loggedIn ? <li>Login</li> : <li onClick={handleSignIn}>Signout</li>}
       </ul>
     </nav>
   );

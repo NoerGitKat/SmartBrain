@@ -5,5 +5,11 @@ ul {
 
   li {
     margin: 1em 2em;
+    cursor: pointer;
+  }
+
+  li:hover {
+    font-weight: 600;
+    text-decoration: underline;
   }
 }

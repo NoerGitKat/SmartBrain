@@ -4,6 +4,7 @@ import Logo from "../components/Logo";
 import ImageLinkForm from "../components/ImageLinkForm";
 import Rank from "../components/Rank";
 import FaceRecognition from "../components/FaceRecognition";
+import SignIn from "../components/SignIn";
 import Particles from "react-particles-js";
 import Clarifai from "clarifai";
 import isImage from "../utils/isImage";
@@ -18,6 +19,7 @@ class App extends React.Component {
       faceURL: "",
       validImg: false,
       box: {},
+      loggedIn: false,
       getImageLink: event => {
         if (isImage(event.target.value)) {
           this.setState({
@@ -32,9 +34,24 @@ class App extends React.Component {
         }
       },
       calcFaceLocation: data => {
-        const faceLocation = data.outputs[0].data.regions[0].region_info.bounding_box;
+        const faceLocation =
+          data.outputs[0].data.regions[0].region_info.bounding_box;
+        const ImgContainer = document.getElementById("ImgContainer");
+        const widthImgContainer = Number(ImgContainer.width);
+        const heightImgContainer = Number(ImgContainer.height);
+        console.log("faceLocation", faceLocation);
+        return {
+          leftCol: faceLocation.left_col * widthImgContainer,
+          rightCol:
+            widthImgContainer - faceLocation.right_col * widthImgContainer,
+          topRow: faceLocation.top_row * heightImgContainer,
+          bottomRow:
+            heightImgContainer - faceLocation.bottom_row * heightImgContainer
+        };
+      },
+      displayFaceBox: box => {
         this.setState({
-          box: faceLocation
+          box: box
         });
       },
       checkFace: () => {
@@ -43,13 +60,20 @@ class App extends React.Component {
         });
         app.models.predict(Clarifai.FACE_DETECT_MODEL, this.state.faceURL).then(
           response => {
-            this.state.calcFaceLocation(response);
+            const { calcFaceLocation, displayFaceBox } = this.state;
+            displayFaceBox(calcFaceLocation(response));
           },
           err => {
             // there was an error
             console.log("err", err);
           }
         );
+      },
+      routeChange: e => {
+        e.preventDefault();
+        this.setState({
+          loggedIn: !this.state.loggedIn
+        });
       }
     };
   }
@@ -61,7 +85,9 @@ class App extends React.Component {
       user,
       checkFace,
       box,
-      validImg
+      validImg,
+      loggedIn,
+      routeChange
     } = this.state;
 
     const particlesOptions = {
@@ -76,14 +102,26 @@ class App extends React.Component {
       }
     };
 
+    console.log("loggedIn", loggedIn);
+
     return (
       <div>
         <Particles className="particles" params={particlesOptions} />
-        <Navigation />
+        <Navigation loggedIn={loggedIn} handleSignIn={routeChange} />
         <Logo />
-        <Rank username={user.username} />
-        <ImageLinkForm getImageLink={getImageLink} checkFace={checkFace} />
-        {validImg ? <FaceRecognition imageURL={faceURL} box={box} /> : <div />}
+        {!loggedIn ? (
+          <SignIn handleSignIn={routeChange} />
+        ) : (
+          <div>
+            <Rank username={user.username} />
+            <ImageLinkForm getImageLink={getImageLink} checkFace={checkFace} />
+            {validImg ? (
+              <FaceRecognition imageURL={faceURL} box={box} />
+            ) : (
+              <div />
+            )}
+          </div>
+        )}
       </div>
     );
   }

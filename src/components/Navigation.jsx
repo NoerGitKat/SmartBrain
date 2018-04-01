@@ -1,7 +1,7 @@
 import React from "react";
 import "../styles/Navigation.scss";
 
-const Navigation = ({ loggedIn, handleSignIn }) => {
+const Navigation = ({ loggedIn, logout }) => {
   console.log("loggedIn Nav", loggedIn);
   return (
     <nav>
@@ -12,7 +12,7 @@ const Navigation = ({ loggedIn, handleSignIn }) => {
             <li>Register</li>
           </ul>
         ) : (
-          <li onClick={handleSignIn}>Signout</li>
+          <li onClick={logout}>Signout</li>
         )}
       </ul>
     </nav>

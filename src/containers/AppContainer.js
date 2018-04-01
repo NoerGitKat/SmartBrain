@@ -72,8 +72,35 @@ class App extends React.Component {
       },
       loggingIn: e => {
         e.preventDefault();
+
         this.setState({
-          loggedIn: !this.state.loggedIn
+          user: {
+            name: e.target[0].value
+          }
+        });
+        console.log("whats the user", this.state.user);
+        fetch("http://localhost:3001/signin", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            email: e.target[0].value,
+            password: e.target[1].value
+          })
+        })
+          .then(response => response.json(response))
+          .then(data => {
+            if (data === "success") {
+              this.setState({
+                loggedIn: true
+              });
+            }
+          });
+      },
+      loggingOut: () => {
+        this.setState({
+          loggedIn: false
         });
       },
       registerSubmit: e => {
@@ -93,7 +120,8 @@ class App extends React.Component {
       validImg,
       loggedIn,
       loggingIn,
-      registerSubmit
+      registerSubmit,
+      loggingOut
     } = this.state;
 
     const particlesOptions = {
@@ -108,12 +136,10 @@ class App extends React.Component {
       }
     };
 
-    console.log("loggedIn", loggedIn);
-
     return (
       <div>
         <Particles className="particles" params={particlesOptions} />
-        <Navigation loggedIn={loggedIn} handleSignIn={loggingIn} />
+        <Navigation loggedIn={loggedIn} logout={loggingOut} />
         <Logo />
         {!loggedIn ? (
           <div>
@@ -124,7 +150,7 @@ class App extends React.Component {
           </div>
         ) : (
           <div>
-            <Rank username={user.username} />
+            <Rank username={user.name} />
             <ImageLinkForm getImageLink={getImageLink} checkFace={checkFace} />
             {validImg ? (
               <FaceRecognition imageURL={faceURL} box={box} />

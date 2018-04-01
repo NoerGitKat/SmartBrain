@@ -6,7 +6,14 @@ const Navigation = ({ loggedIn, handleSignIn }) => {
   return (
     <nav>
       <ul>
-        {!loggedIn ? <li>Login</li> : <li onClick={handleSignIn}>Signout</li>}
+        {!loggedIn ? (
+          <ul>
+            <li>Login</li>
+            <li>Register</li>
+          </ul>
+        ) : (
+          <li onClick={handleSignIn}>Signout</li>
+        )}
       </ul>
     </nav>
   );

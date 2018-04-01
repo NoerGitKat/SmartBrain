@@ -4,7 +4,8 @@ import Logo from "../components/Logo";
 import ImageLinkForm from "../components/ImageLinkForm";
 import Rank from "../components/Rank";
 import FaceRecognition from "../components/FaceRecognition";
-import SignIn from "../components/SignIn";
+import SignInContainer from "../containers/SignInContainer";
+import Register from "../components/Register";
 import Particles from "react-particles-js";
 import Clarifai from "clarifai";
 import isImage from "../utils/isImage";
@@ -69,11 +70,15 @@ class App extends React.Component {
           }
         );
       },
-      routeChange: e => {
+      loggingIn: e => {
         e.preventDefault();
         this.setState({
           loggedIn: !this.state.loggedIn
         });
+      },
+      registerSubmit: e => {
+        e.preventDefault();
+        alert("registered! Well not really");
       }
     };
   }
@@ -87,7 +92,8 @@ class App extends React.Component {
       box,
       validImg,
       loggedIn,
-      routeChange
+      loggingIn,
+      registerSubmit
     } = this.state;
 
     const particlesOptions = {
@@ -107,10 +113,15 @@ class App extends React.Component {
     return (
       <div>
         <Particles className="particles" params={particlesOptions} />
-        <Navigation loggedIn={loggedIn} handleSignIn={routeChange} />
+        <Navigation loggedIn={loggedIn} handleSignIn={loggingIn} />
         <Logo />
         {!loggedIn ? (
-          <SignIn handleSignIn={routeChange} />
+          <div>
+            <SignInContainer
+              handleSignIn={loggingIn}
+              handleSubmit={registerSubmit}
+            />
+          </div>
         ) : (
           <div>
             <Rank username={user.username} />

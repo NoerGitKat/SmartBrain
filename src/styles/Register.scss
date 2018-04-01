@@ -1,12 +1,22 @@
-#signInComponent {
+#registerComponent {
   display: flex;
   flex-direction: column;
 
-  h1 {
+  h1,
+  form,
+  p {
     text-align: center;
   }
+
+  h1 {
+    margin-top: 2em;
+  }
+
+  p {
+    margin-top: 0;
+  }
+
   form {
-    text-align: center;
     input {
       margin: 2em;
     }

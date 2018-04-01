@@ -3,22 +3,21 @@ import "../styles/SignIn.scss";
 
 const SignIn = ({ handleSignIn }) => {
   return (
-    <div>
+    <div id="signInComponent">
+      <h1>Sign In</h1>
       <form onSubmit={handleSignIn}>
-        <label htmlFor="email">E-mail Address</label>
         <input
           type="email"
-          placeholder="E-mail adress"
+          placeholder="E-mail..."
           name="email"
           id="email"
           required
         />
-        <label htmlFor="password">Password</label>
         <input
           type="password"
           name="password"
           id="password"
-          placeholder="Password"
+          placeholder="Password..."
           required
         />
         <button>Sign In</button>

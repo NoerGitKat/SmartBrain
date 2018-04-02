@@ -47,7 +47,7 @@ server.post("/signin", (req, res) => {
     req.body.email === db.users[0].email &&
     req.body.password === db.users[0].password
   ) {
-    res.json("success");
+    res.status(200).json(db.users[0]);
   } else {
     res.status(400).send("no match found");
   }
@@ -99,7 +99,7 @@ server.put("/image", (req, res) => {
     if (user.id === id) {
       found = true;
       user.entries++;
-      return res.json(user.entries);
+      return res.json(user);
     }
   });
   if (!found) {

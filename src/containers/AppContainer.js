@@ -59,16 +59,28 @@ class App extends React.Component {
         const app = new Clarifai.App({
           apiKey: "d3060b13869446c880c2106864843b4f"
         });
-        app.models.predict(Clarifai.FACE_DETECT_MODEL, this.state.faceURL).then(
-          response => {
-            const { calcFaceLocation, displayFaceBox } = this.state;
+
+        app.models
+          .predict(Clarifai.FACE_DETECT_MODEL, this.state.faceURL)
+          .then(response => {
+            const { calcFaceLocation, displayFaceBox, user } = this.state;
+            if (response) {
+              fetch("http://localhost:3001/image", {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  id: user.id
+                })
+              })
+                .then(response => response.json(response))
+                .then(user => {
+                  this.setState({
+                    user: user
+                  });
+                });
+            }
             displayFaceBox(calcFaceLocation(response));
-          },
-          err => {
-            // there was an error
-            console.log("err", err);
-          }
-        );
+          });
       },
       loggingIn: e => {
         e.preventDefault();
@@ -78,7 +90,7 @@ class App extends React.Component {
             name: e.target[0].value
           }
         });
-        console.log("whats the user", this.state.user);
+
         fetch("http://localhost:3001/signin", {
           method: "POST",
           headers: {
@@ -91,12 +103,12 @@ class App extends React.Component {
         })
           .then(response => response.json(response))
           .then(data => {
-            if (data === "success") {
-              this.setState({
-                loggedIn: true
-              });
-            }
-          });
+            this.setState({
+              user: data,
+              loggedIn: true
+            });
+          })
+          .catch(err => console.log("err", err));
       },
       loggingOut: () => {
         this.setState({
@@ -150,12 +162,12 @@ class App extends React.Component {
           </div>
         ) : (
           <div>
-            <Rank username={user.name} />
+            <Rank username={user.name} entries={user.entries} />
             <ImageLinkForm getImageLink={getImageLink} checkFace={checkFace} />
             {validImg ? (
               <FaceRecognition imageURL={faceURL} box={box} />
             ) : (
-              <div />
+              <p className="noValidImg">Please insert a valid image!</p>
             )}
           </div>
         )}

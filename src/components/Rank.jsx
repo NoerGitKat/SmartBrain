@@ -1,12 +1,15 @@
 import React from "react";
 import "../styles/Rank.scss";
 
-const Rank = ({ username }) => {
+const Rank = ({ username, entries }) => {
   return (
     <div className="rank">
-      <p>{username || "random person"} your current rank is...</p>
+      <p>
+        {username || "random person"}, you currently have the following number
+        of entries...
+      </p>
       <br />
-      <p>#5</p>
+      <p>{entries}</p>
     </div>
   );
 };

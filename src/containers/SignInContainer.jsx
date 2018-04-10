@@ -21,10 +21,28 @@ class SignInContainer extends React.Component {
         })
           .then(response => response.json(response))
           .then(data => {
-            const { logUserIn } = this.props;
-            logUserIn(data);
+            const { logUserIn, loggingOut } = this.props;
+            console.log("response data", data);
+            if (
+              data.message === "wrong information" ||
+              data.message === "database empty" ||
+              data.length === 0
+            ) {
+              console.log("logging outttttt");
+              loggingOut();
+              this.setState({
+                errorMsg: data.message
+              });
+            } else {
+              logUserIn(data);
+            }
           })
-          .catch(err => console.log("err", err));
+          .catch(err => {
+            console.log("err", err);
+            this.setState({
+              errorMsg: err.message
+            });
+          });
       },
       registerSubmit: e => {
         e.preventDefault();
@@ -42,7 +60,7 @@ class SignInContainer extends React.Component {
         })
           .then(response => response.json(response))
           .then(user => {
-            console.log('user register', user);
+            console.log("user register", user);
             this.setState({
               registered: true
             });
@@ -51,6 +69,7 @@ class SignInContainer extends React.Component {
       },
       registering: false,
       registered: false,
+      errorMsg: "",
       toRegister: () => {
         this.setState({
           registering: true
@@ -65,15 +84,26 @@ class SignInContainer extends React.Component {
       registerSubmit,
       toRegister,
       registering,
-      registered
+      registered,
+      errorMsg
     } = this.state;
     const registerBtnStyle = {
       display: "flex",
       margin: "5em auto 0"
     };
+
+    const errorMsgStyle = {
+      display: "flex",
+      backgroundColor: "black",
+      color: "red",
+      justifyContent: "center"
+    };
     return (
       <div>
         <SignIn handleSignIn={loggingIn} />
+        <div style={errorMsg ? errorMsgStyle : {}}>
+          <p>{errorMsg}</p>
+        </div>
         {registering ? (
           <Register handleSubmit={registerSubmit} registered={registered} />
         ) : (

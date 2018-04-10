@@ -64,7 +64,7 @@ class App extends React.Component {
         <Logo />
         {!loggedIn ? (
           <div>
-            <SignInContainer logUserIn={logUserIn} />
+            <SignInContainer logUserIn={logUserIn} loggingOut={loggingOut} />
           </div>
         ) : (
           <div>

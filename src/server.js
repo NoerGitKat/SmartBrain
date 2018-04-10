@@ -27,16 +27,23 @@ server.get("/", (req, res) => {
 server.post("/signin", (req, response) => {
   const { email, password } = req.body;
 
+  console.log("db.userbefore", db.users);
   for (let x = 0; x < db.users.length; x++) {
+    console.log("db.user", db.users);
     bcrypt.compare(password, db.users[x].password, function(err, res) {
       const correctPass = res;
       if (email === db.users[x].email && correctPass) {
+        console.log("trigger");
         return response.status(200).json(db.users[x]);
       } else {
         console.log("password wrong");
-        return response.status(400).send("no match found");
+        return response.status(400).json({ message: "wrong information" });
       }
     });
+  }
+  console.log("db.user end", db.users);
+  if (db.users.length === 0) {
+    return response.status(400).json({ message: "database empty" });
   }
 });
 

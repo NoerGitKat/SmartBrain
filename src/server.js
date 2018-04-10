@@ -6,24 +6,7 @@ const cors = require("cors");
 const server = express();
 
 const db = {
-  users: [
-    {
-      id: "122",
-      name: "noer",
-      email: "noer@noer.com",
-      password: "chocolate",
-      entries: 0,
-      joined: new Date()
-    },
-    {
-      id: "123",
-      name: "Coolguy",
-      email: "Coolguy@Coolguy.com",
-      password: "chocolate",
-      entries: 0,
-      joined: new Date()
-    }
-  ]
+  users: []
 };
 
 server.use(bodyParser.json());
@@ -41,29 +24,33 @@ server.get("/", (req, res) => {
   res.send(db.users);
 });
 
-server.post("/signin", (req, res) => {
-  console.log("response", res);
-  if (
-    req.body.email === db.users[0].email &&
-    req.body.password === db.users[0].password
-  ) {
-    res.status(200).json(db.users[0]);
-  } else {
-    res.status(400).send("no match found");
+server.post("/signin", (req, response) => {
+  const { email, password } = req.body;
+
+  for (let x = 0; x < db.users.length; x++) {
+    bcrypt.compare(password, db.users[x].password, function(err, res) {
+      const correctPass = res;
+      if (email === db.users[x].email && correctPass) {
+        return response.status(200).json(db.users[x]);
+      } else {
+        console.log("password wrong");
+        return response.status(400).send("no match found");
+      }
+    });
   }
 });
 
 server.post("/register", (req, res) => {
-  const { email, password, name, id } = req.body;
+  const { email, password, name } = req.body.user;
   const saltRounds = 10;
-  if (email && password && name && id) {
+  if (email && password && name) {
     let userPassword = password;
     bcrypt.genSalt(saltRounds, function(err, salt) {
       bcrypt.hash(password, salt, function(err, hash) {
         userPassword = hash;
         console.log("userPassword", userPassword);
         db.users.push({
-          id,
+          id: "125",
           name,
           email,
           password: userPassword,

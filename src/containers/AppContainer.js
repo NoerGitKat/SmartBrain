@@ -1,14 +1,18 @@
-import React from "react";
-import Navigation from "../components/Navigation";
-import Logo from "../components/Logo";
-import ImageLinkForm from "../components/ImageLinkForm";
-import Rank from "../components/Rank";
-import FaceRecognition from "../components/FaceRecognition";
-import SignInContainer from "../containers/SignInContainer";
-import Register from "../components/Register";
+// Libraries
 import Particles from "react-particles-js";
 import Clarifai from "clarifai";
-import isImage from "../utils/isImage";
+import React from "react";
+
+// Components
+import Navigation from "../components/Navigation";
+import Register from "../components/Register";
+import Logo from "../components/Logo";
+
+// Containers
+import SignInContainer from "../containers/SignInContainer";
+import FaceCheckContainer from "../containers/FaceCheckContainer";
+
+// Styles
 import "../styles/Global.scss";
 
 class App extends React.Component {
@@ -17,124 +21,29 @@ class App extends React.Component {
 
     this.state = {
       user: {},
-      faceURL: "",
-      validImg: false,
-      box: {},
       loggedIn: false,
-      getImageLink: event => {
-        if (isImage(event.target.value)) {
-          this.setState({
-            faceURL: event.target.value,
-            validImg: true
-          });
-        } else {
-          this.setState({
-            faceURL: "",
-            validImg: false
-          });
-        }
-      },
-      calcFaceLocation: data => {
-        const faceLocation =
-          data.outputs[0].data.regions[0].region_info.bounding_box;
-        const ImgContainer = document.getElementById("ImgContainer");
-        const widthImgContainer = Number(ImgContainer.width);
-        const heightImgContainer = Number(ImgContainer.height);
-        console.log("faceLocation", faceLocation);
-        return {
-          leftCol: faceLocation.left_col * widthImgContainer,
-          rightCol:
-            widthImgContainer - faceLocation.right_col * widthImgContainer,
-          topRow: faceLocation.top_row * heightImgContainer,
-          bottomRow:
-            heightImgContainer - faceLocation.bottom_row * heightImgContainer
-        };
-      },
-      displayFaceBox: box => {
+      logUserIn: user => {
         this.setState({
-          box: box
+          user: user,
+          loggedIn: true
         });
-      },
-      checkFace: () => {
-        const app = new Clarifai.App({
-          apiKey: "d3060b13869446c880c2106864843b4f"
-        });
-
-        app.models
-          .predict(Clarifai.FACE_DETECT_MODEL, this.state.faceURL)
-          .then(response => {
-            const { calcFaceLocation, displayFaceBox, user } = this.state;
-            if (response) {
-              fetch("http://localhost:3001/image", {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  id: user.id
-                })
-              })
-                .then(response => response.json(response))
-                .then(user => {
-                  this.setState({
-                    user: user
-                  });
-                });
-            }
-            displayFaceBox(calcFaceLocation(response));
-          });
-      },
-      loggingIn: e => {
-        e.preventDefault();
-
-        this.setState({
-          user: {
-            name: e.target[0].value
-          }
-        });
-
-        fetch("http://localhost:3001/signin", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            email: e.target[0].value,
-            password: e.target[1].value
-          })
-        })
-          .then(response => response.json(response))
-          .then(data => {
-            this.setState({
-              user: data,
-              loggedIn: true
-            });
-          })
-          .catch(err => console.log("err", err));
       },
       loggingOut: () => {
         this.setState({
           loggedIn: false
         });
       },
-      registerSubmit: e => {
-        e.preventDefault();
-        alert("registered! Well not really");
+
+      updateUser: user => {
+        this.setState({
+          user: user
+        });
       }
     };
   }
 
   render() {
-    const {
-      getImageLink,
-      faceURL,
-      user,
-      checkFace,
-      box,
-      validImg,
-      loggedIn,
-      loggingIn,
-      registerSubmit,
-      loggingOut
-    } = this.state;
+    const { user, loggedIn, logUserIn, loggingOut, updateUser } = this.state;
 
     const particlesOptions = {
       particles: {
@@ -155,20 +64,11 @@ class App extends React.Component {
         <Logo />
         {!loggedIn ? (
           <div>
-            <SignInContainer
-              handleSignIn={loggingIn}
-              handleSubmit={registerSubmit}
-            />
+            <SignInContainer logUserIn={logUserIn} />
           </div>
         ) : (
           <div>
-            <Rank username={user.name} entries={user.entries} />
-            <ImageLinkForm getImageLink={getImageLink} checkFace={checkFace} />
-            {validImg ? (
-              <FaceRecognition imageURL={faceURL} box={box} />
-            ) : (
-              <p className="noValidImg">Please insert a valid image!</p>
-            )}
+            <FaceCheckContainer user={user} updateUser={updateUser} />
           </div>
         )}
       </div>

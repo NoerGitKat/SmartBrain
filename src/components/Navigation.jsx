@@ -5,16 +5,7 @@ const Navigation = ({ loggedIn, logout }) => {
   console.log("loggedIn Nav", loggedIn);
   return (
     <nav>
-      <ul>
-        {!loggedIn ? (
-          <ul>
-            <li>Login</li>
-            <li>Register</li>
-          </ul>
-        ) : (
-          <li onClick={logout}>Signout</li>
-        )}
-      </ul>
+      <ul>{!loggedIn ? <li>Login</li> : <li onClick={logout}>Signout</li>}</ul>
     </nav>
   );
 };

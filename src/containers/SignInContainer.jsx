@@ -24,7 +24,7 @@ class SignInContainer extends React.Component {
             const { logUserIn, loggingOut } = this.props;
             console.log("response data", data);
             if (
-              data.message === "wrong information" ||
+              data.message === "Submitted wrong credentials!" ||
               data.message === "database empty" ||
               data.length === 0
             ) {
@@ -34,7 +34,7 @@ class SignInContainer extends React.Component {
                 errorMsg: data.message
               });
             } else {
-              logUserIn(data);
+              logUserIn(data[0]);
             }
           })
           .catch(err => {
@@ -61,15 +61,22 @@ class SignInContainer extends React.Component {
           .then(response => response.json(response))
           .then(user => {
             console.log("user register", user);
-            this.setState({
-              registered: true
-            });
+            if (user.name === "error") {
+              this.setState({
+                registerErr: "Unable to register!"
+              });
+            } else {
+              this.setState({
+                registered: true
+              });
+            }
           })
           .catch(err => console.log("err", err));
       },
       registering: false,
       registered: false,
       errorMsg: "",
+      registerErr: "",
       toRegister: () => {
         this.setState({
           registering: true
@@ -85,7 +92,8 @@ class SignInContainer extends React.Component {
       toRegister,
       registering,
       registered,
-      errorMsg
+      errorMsg,
+      registerErr
     } = this.state;
     const registerBtnStyle = {
       display: "flex",
@@ -105,7 +113,11 @@ class SignInContainer extends React.Component {
           <p>{errorMsg}</p>
         </div>
         {registering ? (
-          <Register handleSubmit={registerSubmit} registered={registered} />
+          <Register
+            handleSubmit={registerSubmit}
+            registered={registered}
+            err={registerErr}
+          />
         ) : (
           <button style={registerBtnStyle} onClick={toRegister}>
             Register

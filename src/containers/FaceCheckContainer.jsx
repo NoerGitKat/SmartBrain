@@ -35,7 +35,6 @@ class FaceCheckContainer extends React.Component {
         const ImgContainer = document.getElementById("ImgContainer");
         const widthImgContainer = Number(ImgContainer.width);
         const heightImgContainer = Number(ImgContainer.height);
-        console.log("faceLocation", faceLocation);
         return {
           leftCol: faceLocation.left_col * widthImgContainer,
           rightCol:
@@ -80,6 +79,7 @@ class FaceCheckContainer extends React.Component {
   render() {
     const { user } = this.props;
     const { getImageLink, checkFace, faceURL, box, validImg } = this.state;
+    console.log("what is the user", user);
     return (
       <div>
         <Rank username={user.name} entries={user.entries} />

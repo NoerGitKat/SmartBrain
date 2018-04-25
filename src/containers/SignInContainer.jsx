@@ -28,7 +28,6 @@ class SignInContainer extends React.Component {
               data.message === "database empty" ||
               data.length === 0
             ) {
-              console.log("logging outttttt");
               loggingOut();
               this.setState({
                 errorMsg: data.message

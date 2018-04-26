@@ -1,7 +1,13 @@
 const handleRegister = (req, res, db, bcrypt) => {
   const { email, password, name } = req.body.user;
   const saltRounds = 10;
-  if (email && password && name) {
+  if (!email) {
+    return res.status(400).json('Please enter a valid email address!');
+  } else if (!password) {
+    return res.status(400).json('Please enter a valid password!');
+  } else if (!name) {
+    return res.status(400).json('Please enter a valid name!');
+  } else if (email && password && name) {
     let userPassword = password;
     bcrypt.genSalt(saltRounds, function(err, salt) {
       bcrypt.hash(password, salt, function(err, hash) {
@@ -28,7 +34,7 @@ const handleRegister = (req, res, db, bcrypt) => {
       });
     });
   } else {
-    res.status(400).send("missing information");
+    res.status(400).send("Something went wrong with the server!");
   }
 };
 

@@ -26,6 +26,7 @@ class SignInContainer extends React.Component {
             if (
               data.message === "Submitted wrong credentials!" ||
               data.message === "database empty" ||
+              data.message === "User doesn't exist!" ||
               data.length === 0
             ) {
               loggingOut();
